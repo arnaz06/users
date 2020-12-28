@@ -22,3 +22,15 @@ func (e ConstraintError) Error() string {
 func ConstraintErrorf(format string, a ...interface{}) ConstraintError {
 	return ConstraintError(fmt.Sprintf(format, a...))
 }
+
+// UnauthorizedError represents a custom error for an error related with authentication things.
+type UnauthorizedError string
+
+func (e UnauthorizedError) Error() string {
+	return string(e)
+}
+
+// UnauthorizedErrorf constructs UnauthorizedError with formatted message.
+func UnauthorizedErrorf(format string, a ...interface{}) UnauthorizedError {
+	return UnauthorizedError(fmt.Sprintf(format, a...))
+}

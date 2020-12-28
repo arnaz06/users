@@ -10,7 +10,7 @@ import (
 	"github.com/labstack/echo/v4"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/arnaz06/soccer"
+	"github.com/arnaz06/users"
 )
 
 // TimeoutMiddleware is used to add timeout for context cancellation.
@@ -52,8 +52,13 @@ func ErrorMiddleware() echo.MiddlewareFunc {
 				return echo.NewHTTPError(e.Code, e.Message)
 			}
 
-			if _, ok := err.(soccer.ConstraintError); ok {
+			if _, ok := err.(users.ConstraintError); ok {
 				return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+			}
+
+			if _, ok := err.(users.UnauthorizedError); ok {
+				lg.Errorln(err.Error())
+				return echo.NewHTTPError(http.StatusUnauthorized, err.Error())
 			}
 
 			switch err {
@@ -61,7 +66,7 @@ func ErrorMiddleware() echo.MiddlewareFunc {
 				lg.Errorln(err.Error())
 				return echo.NewHTTPError(http.StatusRequestTimeout, err.Error())
 
-			case soccer.ErrNotFound:
+			case users.ErrNotFound:
 				return echo.NewHTTPError(http.StatusNotFound, err.Error())
 			}
 
