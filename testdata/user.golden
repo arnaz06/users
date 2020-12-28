@@ -1,0 +1,8 @@
+{
+    "id": "123",
+    "email": "jhon@doe.com",
+    "password": "secret-123",
+    "address": "lorem ipsum lorem ipsum",
+    "created_time": "2020-08-29T09:32:25+07:00",
+    "updated_time": "2020-08-29T09:32:25+07:00"
+}

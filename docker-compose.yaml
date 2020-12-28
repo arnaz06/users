@@ -1,0 +1,32 @@
+version: '2.3'
+
+networks:
+  backend:
+    driver: bridge
+
+services:
+  api:
+    image: users
+    container_name: users_api
+    command: /app/users http
+    ports:
+      - 7723:7723
+    depends_on:
+      - mysql
+    env_file:
+      - .env
+    networks:
+      - backend
+
+  mysql:
+    image: mysql:5.7
+    container_name: users_mysql
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_DATABASE=users
+      - MYSQL_USER=users
+      - MYSQL_PASSWORD=users-pass
+      - MYSQL_ROOT_PASSWORD=users-pass
+    networks:
+      - backend

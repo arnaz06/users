@@ -1,0 +1,4 @@
+# Ignore env variable
+.env
+# Ignore project dependencies
+vendor/
