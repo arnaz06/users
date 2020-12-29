@@ -1,0 +1,216 @@
+openapi: '3.0.1'
+
+info:
+  title: 'Users API'
+  description: 'An API for user management'
+  version: '0.1'
+servers:
+  - url: 'localhost:7723'
+    description: 'local'
+paths:
+  '/user':
+    post:
+      tags:
+       - User
+      summary: 'Create new user'
+      operationId: 'addUser'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '201':
+          description: 'Player created.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+  '/user/login':
+    post:
+      tags:
+       - User
+      summary: 'User login'
+      operationId: 'loginUser'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: 'Player created.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+  '/user/{userId}':
+    put:
+      tags:
+       - User
+      summary: 'Update Existing user'
+      operationId: 'updateUser'
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: 'userId'
+          in: 'path'
+          required: true
+          description: 'ID of team to be retrieved.'
+          schema:
+            type: 'string'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '204':
+          description: 'User Updated.'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+    get:
+      tags:
+       - User
+      summary: 'Get user data'
+      operationId: 'getUser'
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: 'userId'
+          in: 'path'
+          required: true
+          description: 'ID of team to be retrieved.'
+          schema:
+            type: 'string'
+      responses:
+        '200':
+          description: 'Success get User.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+    delete:
+      tags:
+       - User
+      summary: 'Delete the user data'
+      operationId: 'deleteUser'
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: 'userId'
+          in: 'path'
+          required: true
+          description: 'ID of team to be retrieved.'
+          schema:
+            type: 'string'
+      responses:
+        '204':
+          description: 'User Deleted.'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+  responses:
+      BadRequest:
+        description: 'Bad input parameter.'
+      NotFound:
+        description: 'Not found.'
+      UnauthorizedError:
+          description: 'Access Token is missing or invalid.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+              example:
+                code: 401
+                message: 'Access Token is missing or invalid.'
+  schemas:
+    ErrorMessage:
+      type: 'object'
+      properties:
+        code:
+          description: 'The error code.'
+          type: 'integer'
+        message:
+          description: 'The error message.'
+          type: 'string'
+      required:
+        - code
+        - message
+    LoginResponse:
+      type: 'object'
+      properties:
+        token:
+          type: 'string'
+          description: 'token to access the API'
+          example: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MDkyMTY5ODV9.evU7HXngWcxU72_fTuQ1GQAbG4jSjNm1mEytDh5Kmxg'
+          readOnly: true
+    LoginRequest:
+      type: 'object'
+      properties:
+        email:
+          type: 'string'
+          description: 'Email of the user'
+          example: 'jhon@doe.com'
+        password:
+          type: 'string'
+          description: 'password of the user'
+          example: 'secret-123'
+      required:
+        - email
+        - password
+
+    User:
+      type: 'object'
+      properties:
+        id:
+          type: 'string'
+          description: 'Identifier of the user data'
+          example: '00076d30-f61b-4611-bcb9-ea393352a4e7'
+          readOnly: true
+        email:
+          type: 'string'
+          description: 'Email of the user'
+          example: 'jhon@doe.com'
+        address:
+          type: 'string'
+          description: 'addres of the user'
+          example: 'foo bar foo bar bar foo'
+        password:
+          type: 'string'
+          description: 'password of the user'
+          example: 'secret-123'
+        created_time:
+          type: 'string'
+          description: 'Create time of team data'
+          example: '2020-10-02T10:00:00+07:00'
+          format: date-time
+        updated_time:
+          type: 'string'
+          description: 'Last updated time of team data'
+          example: '1990-10-02T10:00:00+07:00'
+          format: date-time
+      required:
+        - email
+        - password

@@ -8,7 +8,7 @@ RUN go mod download
 
 COPY . .
 
-RUN go build -o users github.com/arnaz06/users/cmd/users
+RUN go build -o users github.com/arnaz06/users/cmd/api
 
 ## Distribution
 FROM alpine:3.12

@@ -59,7 +59,7 @@ migrate-down:
 #Build
 .PHONY: users
 users:
-	GO111MODULE=on go build -o users -ldflags="-X 'github.com/arnaz06/users.Version=${GIT_COMMIT}'" github.com/arnaz06/users/cmd/users
+	GO111MODULE=on go build -o users -ldflags="-X 'github.com/arnaz06/users.Version=${GIT_COMMIT}'" github.com/arnaz06/users/cmd/api
 
 .PHONY: docker
 docker: vendor $(SOURCES)

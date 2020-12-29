@@ -7,11 +7,18 @@ import (
 	"strings"
 	"time"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/arnaz06/users"
 )
+
+type myCustomClaims struct {
+    Email string `json:"email"`
+    jwt.StandardClaims
+}
 
 // TimeoutMiddleware is used to add timeout for context cancellation.
 func TimeoutMiddleware(timeout time.Duration) echo.MiddlewareFunc {
@@ -23,6 +30,28 @@ func TimeoutMiddleware(timeout time.Duration) echo.MiddlewareFunc {
 			c.SetRequest(req)
 			return handlerFunc(c)
 		}
+	}
+}
+
+// AuthenticationMiddleware is a function to check a user based on key authentication.
+func AuthenticationMiddleware(secretKey string) middleware.KeyAuthValidator {
+	return func(key string, c echo.Context) (bool, error) {
+		tokenString := c.Request().Header.Get("Authorization")
+
+		splitedString := strings.Split(tokenString, " ")
+
+		if len(splitedString) < 2 {
+			return false, users.UnauthorizedErrorf("invalid token format")
+		}
+
+		_, err := jwt.ParseWithClaims(splitedString[1], &myCustomClaims{}, func(token *jwt.Token) (interface{}, error) {
+			return []byte(secretKey), nil
+		})
+		if err != nil {
+			return false, users.UnauthorizedErrorf("invalid token: %+v", err)
+		}
+
+		return true, nil
 	}
 }
 
